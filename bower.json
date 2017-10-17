@@ -1,0 +1,21 @@
+{
+  "name": "task",
+  "description": "",
+  "main": "index.js",
+  "authors": [
+    "jk <strel.jk.93@gmail.com>"
+  ],
+  "license": "ISC",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "v4.0.0-beta",
+    "angular": "^1.6.6"
+  }
+}
