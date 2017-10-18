@@ -46,6 +46,7 @@ class Task extends MY_Controller {
 				'controller' => 'task',
 				'services' => array(
 					'task',
+					'user',
 				),
 			),
 
@@ -61,9 +62,10 @@ class Task extends MY_Controller {
 		$start = $this->input->get('start');
 		$order = $this->input->get('order');
 		$columns = $this->input->get('columns');
+		$pagination_data = $this->input->get('pagination_data');
 
-		$count = $this->task->get_task_count();
-    $task_list = $this->task->get_task($length, $start, $order, $columns);
+		$count = $this->task->get_task_count($pagination_data);
+    $task_list = $this->task->get_task($length, $start, $order, $columns, $pagination_data);
     if($user_list = $this->user->get_user())
 		{
 			foreach($user_list as $user)
@@ -86,6 +88,28 @@ class Task extends MY_Controller {
     // exit;
 
     echo json_encode($config);
+	}
+
+	public function load_max_date()
+	{
+		if($max_date = $this->task->get_max_date())
+		{
+			$this->_message['success'] = TRUE;
+			$this->_message['info'] = $max_date;
+		}
+
+		echo json_encode($this->_message);
+	}
+
+	public function load_min_date()
+	{
+		if($min_date = $this->task->get_min_date())
+		{
+			$this->_message['success'] = TRUE;
+			$this->_message['info'] = $min_date;
+		}
+
+		echo json_encode($this->_message);
 	}
 
 }

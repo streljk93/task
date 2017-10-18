@@ -8,11 +8,15 @@ angular.module('taskApp', ['datatables'])
 	
 });
 
-$('.input-daterange input').each(function() {
-  $(this).datepicker('clearDates');
+$(function() {
+  $('input[name="daterange"]').daterangepicker({
+    locale: {
+      format: 'YYYY-MM-DD'
+    }
+  });
 });
 
-NProgress.start();
-setTimeout(function() {
-	NProgress.done();
-}, 3000);
+// NProgress.start();
+// setTimeout(function() {
+// 	NProgress.done();
+// }, 3000);

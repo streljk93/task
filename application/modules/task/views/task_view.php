@@ -4,22 +4,21 @@
 			<div class="list-group">
 				<div class="list-group-item d-flex justify-content-center align-items-center text-uppercase font-weight-bold">
 					Операции
-					<button ng-click="task.dtInstance.changeData()">asdfa</button>
 				</div>
-			  <a class="list-group-item list-group-item-action flex-column align-items-start">
+			  <a class="list-group-item list-group-item-action flex-column align-items-start" ng-click="requestOverdue()">
 			    <div class="d-flex w-100 justify-content-between">
 			      <p class="mb-1 font-weight-bold"><i class="fa fa-eye"></i> Просроченые задачи</p>
 			      <small>(operation)</small>
 			    </div>
 			    <small>Задача считается просроченной, если дата ее окончания больше текущей и она не выполнена.</small>
 			  </a>
-			  <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+			  <a href="#" class="list-group-item list-group-item-action flex-column align-items-start" ng-click="requestNotOnceUser()">
 			    <div class="d-flex w-100 justify-content-between">
 			      <p class="mb-1 font-weight-bold"><i class="fa fa-eye"></i> Все задачи, имеющие более одного исполнителя</p>
 			      <small>(operation)</small>
 			    </div>
 			  </a>
-			  <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+			  <a href="#" class="list-group-item list-group-item-action flex-column align-items-start" ng-click="requestTop5()" data-toggle="modal" data-target="#exampleModal">
 			    <div class="d-flex w-100 justify-content-between">
 			      <p class="mb-1 font-weight-bold"><i class="fa fa-eye"></i> Топ 5 пользователей</p>
 			      <small>(operation)</small>
@@ -32,10 +31,12 @@
 			<!-- <div class="list-group mb-2"> -->
 				<!-- <div class="list-group-item"> -->
 					<div class="input-group input-daterange">
-				    <div class="input-group-addon">Начало</div>
-				    <input type="text" class="form-control" value="2012-04-05">
-				    <div class="input-group-addon">Окончание</div>
-				    <input type="text" class="form-control" value="2012-04-19">
+				    <div class="input-group-addon">Date range</div>
+				    <input name="daterange" type="text" class="form-control" ng-model="daterange" ng-change="requestDateRange(daterange)" value="{{daterange}}">
+					</div>
+					<div class="input-group">
+					  <span class="input-group-addon" id="basic-addon1">Поиск по постановщику</span>
+					  <input type="text" class="form-control" placeholder="director" aria-label="Username" aria-describedby="basic-addon1" ng-model="queryDirector" ng-change="requestSearchDirector(queryDirector)">
 					</div>
 				<!-- </div> -->
 			<!-- </div> -->
@@ -78,4 +79,28 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="exampleModalLabel">TOP 5 USER</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	      	<div ng-repeat="user in userList">
+	      		USER:: {{user.firstname}} {{user.middlename}} {{user.lastname}} -> count({{user.task_count}})
+	      	</div>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+	        <button type="button" class="btn btn-primary">Save changes</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
 </div>

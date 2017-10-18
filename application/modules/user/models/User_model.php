@@ -13,11 +13,11 @@ class User_model extends CI_Model {
 		if(!$this->_valid_generate()) return FALSE;
 
 		$data = array();
-		for($i = 1; $i < 1001; $i++)
+		for($i = 1; $i < 2001; $i++)
 		{
-			$data[$i]['firstname'] = 'firstname_' . $i;
-			$data[$i]['middlename'] = 'middlename_' . $i;
-			$data[$i]['lastname'] = 'lastname_' . $i;
+			$data[$i]['firstname'] = 'first_' . $i;
+			$data[$i]['middlename'] = 'middle_' . $i;
+			$data[$i]['lastname'] = 'last_' . $i;
 		}
 
 		// echo "<pre>";
@@ -56,6 +56,35 @@ class User_model extends CI_Model {
 		{
 			return TRUE;
 		}
+	}
+
+	public function get_top_5($daterange)
+	{
+		$this->db->select('"user".*, COUNT("user_task"."user_id") as "task_count"', FALSE);
+		$this->db->from('user');
+		$this->db->join('user_task', 'user_task.user_id = user.id');
+		$this->db->join('task', 'task.id = user_task.task_id');
+
+		if($daterange !== 'false')
+		{
+			$daterange = json_decode($daterange, TRUE);
+			$this->db->where('("start", "end") OVERLAPS (\'' . $daterange['start'] . '\'::DATE, \'' . $daterange['end'] . '\'::DATE)', NULL, FALSE);
+		}
+
+		$this->db->group_by('user.id');
+		$this->db->order_by('task_count', 'desc');
+		$this->db->limit(5);
+		$query = $this->db->get();
+
+		if($result = $query->result_array())
+		{
+			return $result;
+		}
+		else
+		{
+			return FALSE;
+		}
+
 	}
 
 }

@@ -13,8 +13,8 @@ class Task_model extends CI_Model {
 		if(!$this->_valid_generate()) return FALSE;
 
 		$data = array();
-		$date_end = date_create('2017-01-01');
-		$date_start = date_create('2017-01-10');
+		$date_start = date_create('2017-01-01');
+		$date_end = date_create('2017-01-10');
 		for($i = 1; $i < 1001; $i++)
 		{
 			$data[$i]['id'] = $i;
@@ -51,7 +51,7 @@ class Task_model extends CI_Model {
 		if(!$this->_valid_generate_user_task()) return FALSE;
 
 		$data = array();
-		for($i = 1; $i < 1001; $i++)
+		for($i = 1; $i < 2001; $i++)
 		{
 			$data[$i]['user_id'] = rand(1, 1000);
 			$data[$i]['task_id'] = rand(1, 1000);
@@ -66,12 +66,15 @@ class Task_model extends CI_Model {
 		return TRUE;
 	}
 
-	public function get_task($length, $start, $order, $columns)
+	public function get_task($length, $start, $order, $columns, $pagination_data)
 	{
-		$query = $this->_get_task_query();
+		$query = $this->_get_task_query($pagination_data);
 		$query = $query->limit($length, $start);
 		$column_name = $columns[$order[0]['column']]['data'];
-		$query = $query->order_by($column_name, $order[0]['dir']);
+		if($column_name === 'firstname')
+			$query = $query->order_by('userlist.' . $column_name, $order[0]['dir']);
+		else
+			$query = $query->order_by($column_name, $order[0]['dir']);
 		$query = $query->get();
 
 		if($result = $query->result_array())
@@ -80,22 +83,49 @@ class Task_model extends CI_Model {
 		}
 		else
 		{
-			return FALSE;
+			return array();
 		}
 	}
 
-	public function get_task_count()
+	public function get_task_count($pagination_data)
 	{
-		$query = $this->_get_task_query()->get();
+		$query = $this->_get_task_query($pagination_data)->get();
 
 		return $query->num_rows();
 	}
 
-	private function _get_task_query()
+	private function _get_task_query($pagination_data)
 	{
-		$this->db->select('task.*, user.firstname as director_firstname, user.middlename as director_middlename, user.lastname as director_lastname, status.name as status_name');
+		$this->db->select('task.*, director.firstname as director_firstname, director.middlename as director_middlename, director.lastname as director_lastname, status.name as status_name');
 		$this->db->from('task');
-		$this->db->join('user', 'user.id = task.director_id');
+		$this->db->join('user as director', 'director.id = task.director_id');
+		$this->db->join('user_task', 'user_task.task_id = task.id');
+		$this->db->join('user as userlist', 'userlist.id = user_task.user_id');
+
+		// get date range
+		if($pagination_data && isset($pagination_data['daterange']))
+			$this->db->where('("start", "end") OVERLAPS (\'' . $pagination_data['daterange']['start'] . '\'::DATE, \'' . $pagination_data['daterange']['end'] . '\'::DATE)', NULL, FALSE);
+
+		// get overdue date
+		if($pagination_data && isset($pagination_data['overdue']))
+		{
+			$this->db->where('"end" < ', 'now()', FALSE);
+			$this->db->where('status_id', 2);
+		}
+
+		// get user list
+		if($pagination_data && isset($pagination_data['not_once_user']))
+		{
+			$this->db->group_by('task.id, director.id, status.id');
+			$this->db->having('COUNT(userlist.id) > 1');
+		}
+
+		// get director (search)
+		if($pagination_data && isset($pagination_data['query_director']))
+		{
+			$this->db->like('director.firstname', $pagination_data['query_director']);
+		}
+
 		$query = $this->db->join('status', 'status.id = task.status_id');
 		
 
@@ -127,6 +157,38 @@ class Task_model extends CI_Model {
 		else
 		{
 			return TRUE;
+		}
+	}
+
+	public function get_max_date()
+	{
+		$query = $this->db->select('MAX("end") as max_date', FALSE)
+			->from('task')
+		->get();
+
+		if($result = $query->row_array())
+		{
+			return $result['max_date'];
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
+
+	public function get_min_date()
+	{
+		$query = $this->db->select('MIN("start") as min_date', FALSE)
+			->from('task')
+		->get();
+
+		if($result = $query->row_array())
+		{
+			return $result['min_date'];
+		}
+		else
+		{
+			return FALSE;
 		}
 	}
 

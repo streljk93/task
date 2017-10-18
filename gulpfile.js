@@ -12,9 +12,10 @@ gulp.task('sass', function() {
 gulp.task('jsLibs', function() {
 	gulp.src([
 			'assets/libs/jquery/dist/jquery.min.js',
+			'assets/libs/moment/min/moment.min.js',
 			'assets/libs/datatables.net/js/jquery.dataTables.min.js',
 			'assets/libs/bootstrap/dist/js/bootstrap.min.js',
-			'assets/libs/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js',
+			'assets/libs/bootstrap-daterangepicker/daterangepicker.js',
 			'assets/libs/nprogress/nprogress.js',
 			'assets/libs/angular/angular.min.js',
 			'assets/libs/angular-datatables/dist/angular-datatables.min.js',

@@ -15,6 +15,19 @@ class User extends MY_Controller {
 		$this->user->generate();
 	}
 
+	public function load_top_5()
+	{
+		$daterange = $this->input->get('daterange');
+
+		if($user_list = $this->user->get_top_5($daterange))
+		{
+			$this->_message['success'] = TRUE;
+			$this->_message['info'] = $user_list;
+		}
+
+		echo json_encode($this->_message);
+	}
+
 }
 
 /* End of file User.php */
