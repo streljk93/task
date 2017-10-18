@@ -1,1 +1,2 @@
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/angular-datatables/0.6.2/plugins/bootstrap/datatables.bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="css/main.css">

@@ -16,6 +16,10 @@
   ],
   "dependencies": {
     "bootstrap": "v4.0.0-beta",
-    "angular": "^1.6.6"
+    "angular": "^1.6.6",
+    "font-awesome": "^4.7.0",
+    "bootstrap-datepicker": "^1.7.1",
+    "nprogress": "^0.2.0",
+    "angular-datatables": "0.5"
   }
 }
